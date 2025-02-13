@@ -1,8 +1,9 @@
 import { ReactNode, createContext, useContext } from 'react'
 import { ethers } from 'ethers'
 
-// https://docs.ethers.org/v6/api/providers/jsonrpc/#about-jsonrpcProvider
-const provider = new ethers.JsonRpcProvider(
+// doc: https://docs.ethers.org/v6/api/providers/jsonrpc/#about-jsonrpcProvider
+// eslint-disable-next-line react-refresh/only-export-components
+export const provider = new ethers.JsonRpcProvider(
   import.meta.env.VITE_SEPOLIA_RPC_URL
 )
 const RPCContext = createContext<{ provider: ethers.JsonRpcProvider }>({

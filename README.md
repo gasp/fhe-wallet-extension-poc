@@ -2,7 +2,7 @@
 
 - [x] Display current wallet address.
 - [x] Show account balance in clear ETH
-- [ ] get gas price
+- [x] get gas price
 - [x] make a transaction
 - [x] Recent transaction history
 - [ ] Store private keys securely.

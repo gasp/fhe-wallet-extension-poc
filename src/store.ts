@@ -11,6 +11,8 @@ type Store = {
   setSigner: (signer: ethers.Wallet) => void
   transactions: Transaction[]
   setTransactions: (transactions: Transaction[]) => void
+  gasPrice: bigint
+  setGasPrice: (gasPrice: bigint) => void
 }
 
 export const useStore = create<Store>((set) => ({
@@ -22,4 +24,6 @@ export const useStore = create<Store>((set) => ({
   setSigner: (signer: ethers.Wallet) => set({ signer }),
   transactions: [],
   setTransactions: (transactions: Transaction[]) => set({ transactions }),
+  gasPrice: BigInt(0),
+  setGasPrice: (gasPrice: bigint) => set({ gasPrice }),
 }))

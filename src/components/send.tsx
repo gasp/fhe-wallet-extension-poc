@@ -13,6 +13,7 @@ export function Send() {
   const setTransactions = useStore((state) => state.setTransactions)
   const transactions = useStore((state) => state.transactions)
   const signer = useStore((state) => state.signer)
+  const gasPrice = useStore((state) => state.gasPrice)
   const { provider } = useRPC()
 
   async function sendTransaction() {
@@ -32,8 +33,7 @@ export function Send() {
         to,
         value: ethers.parseEther(amount), // Amount to expects wei value
         gasLimit: 21000, // Basic gas limit for a simple transaction
-        // TODO: Add gas price from state
-        // gasPrice, // Get current gas price from state
+        gasPrice, //use current gas price
         chainId: Number((await provider.getNetwork()).chainId), // https://chainlist.org/chain/11155111
       }
 
@@ -53,7 +53,7 @@ export function Send() {
       await tx.wait()
 
       // NOTE: this is not redux
-      // transactions hasn't been updated in the meantime
+      // transactions have't been updated yet by latest setTransactions
       setTransactions([
         ...transactions,
         {

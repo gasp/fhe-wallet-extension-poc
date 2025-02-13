@@ -7,6 +7,7 @@ import { Address } from './components/address'
 import { Balance } from './components/balance'
 import { Send } from './components/send'
 import { Activity } from './components/activity'
+import { GasPrice } from './components/gas-price'
 
 export function App() {
   const { provider } = useRPC()
@@ -27,6 +28,7 @@ export function App() {
       <Balance />
       <Send />
       <Activity />
+      <GasPrice />
     </>
   )
 }
