@@ -10,7 +10,7 @@ export function App() {
   const [isLoading, setIsLoading] = useState(true)
   const hasWallet = useAuthStore((state) => state.hasWallet)
   const setHasWallet = useAuthStore((state) => state.setHasWallet)
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
+  const walletPrivateKey = useAuthStore((state) => state.walletPrivateKey)
 
   useEffect(() => {
     hasEncryptedWalletKey().then((result) => {
@@ -20,6 +20,6 @@ export function App() {
   })
   if (isLoading) return <div>Loading...</div>
   if (!hasWallet) return <Create />
-  if (!isLoggedIn) return <Login />
+  if (!walletPrivateKey) return <Login />
   return <Authenticated />
 }

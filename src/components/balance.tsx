@@ -36,6 +36,9 @@ export function Balance() {
       <button onClick={() => fetchBalance(address)}>
         <span>Refresh</span>
       </button>
+      {balance === '0.0' && (
+        <div>You don't have any fund, send yourself some sepolia</div>
+      )}
     </div>
   )
 }

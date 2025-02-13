@@ -18,8 +18,8 @@ type AppStore = {
 type AuthStore = {
   hasWallet: boolean
   setHasWallet: (hasWallet: boolean) => void
-  isLoggedIn: boolean
-  setIsLoggedIn: (isLoggedIn: boolean) => void
+  walletPrivateKey: string
+  setWalletPrivateKey: (walletPrivateKey: string) => void
 }
 
 export const useAppStore = create<AppStore>((set) => ({
@@ -38,6 +38,6 @@ export const useAppStore = create<AppStore>((set) => ({
 export const useAuthStore = create<AuthStore>((set) => ({
   hasWallet: false,
   setHasWallet: (hasWallet: boolean) => set({ hasWallet }),
-  isLoggedIn: false,
-  setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
+  walletPrivateKey: '',
+  setWalletPrivateKey: (walletPrivateKey: string) => set({ walletPrivateKey }),
 }))

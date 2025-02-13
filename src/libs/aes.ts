@@ -1,5 +1,6 @@
+const AES_SALT = import.meta.env.VITE_AES_SALT ?? 'wallet_salt'
+
 async function getKeyFromPassword(password: string) {
-  console.log('password', password)
   const enc = new TextEncoder()
   const keyMaterial = await window.crypto.subtle.importKey(
     'raw',
@@ -11,7 +12,7 @@ async function getKeyFromPassword(password: string) {
   return window.crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: enc.encode('wallet_salt'),
+      salt: enc.encode(AES_SALT),
       iterations: 100000,
       hash: 'SHA-256',
     },

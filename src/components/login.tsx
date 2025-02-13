@@ -1,53 +1,36 @@
 import { useCallback, useState } from 'react'
 import { getEncryptedWalletKey } from '../storage'
+import { decryptPrivateKey } from '../libs/aes'
+import { useAuthStore } from '../store'
 
 export function Login() {
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('swordfish')
+  const setWalletPrivateKey = useAuthStore((state) => state.setWalletPrivateKey)
   const [decryptedKey, setDecryptedKey] = useState('')
   const [error, setError] = useState('')
 
-  const getKeyFromPassword = async (password: string) => {
-    const enc = new TextEncoder()
-    const keyMaterial = await window.crypto.subtle.importKey(
-      'raw',
-      enc.encode(password),
-      { name: 'PBKDF2' },
-      false,
-      ['deriveKey']
-    )
-    return window.crypto.subtle.deriveKey(
-      {
-        name: 'PBKDF2',
-        salt: enc.encode('wallet_salt'),
-        iterations: 100000,
-        hash: 'SHA-256',
-      },
-      keyMaterial,
-      { name: 'AES-GCM', length: 256 },
-      false,
-      ['encrypt', 'decrypt']
-    )
-  }
-
   const decryptKey = useCallback(async () => {
     try {
+      setDecryptedKey('')
       const { encrypted, iv } = await getEncryptedWalletKey()
+
+      console.log({ encrypted, iv })
       if (!encrypted || !iv) {
         console.error('No encrypted key found')
         return
       }
-      const key = await getKeyFromPassword(password)
-      const decrypted = await window.crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: new Uint8Array(iv) },
-        key,
-        new Uint8Array(encrypted)
-      )
-      setDecryptedKey(new TextDecoder().decode(decrypted))
+
+      const decrypted = await decryptPrivateKey(password, encrypted, iv)
+      // TODO; create a wallet with this key
+      setDecryptedKey(decrypted)
+      setWalletPrivateKey(decrypted)
+
+      setError('')
     } catch (error) {
       console.error(error)
-      setError('Error decrypting key')
+      setError(`Error decrypting key: ${error}`)
     }
-  }, [password])
+  }, [password, setWalletPrivateKey])
 
   return (
     <section>
