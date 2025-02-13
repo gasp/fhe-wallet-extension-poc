@@ -1,0 +1,18 @@
+# First step: create a simple autonomous wallet for clear ETH
+
+- [ ] Display current wallet address.
+- [ ] Show account balance in clear ETH
+- [ ] get gas price
+- [ ] make a transaction
+- [ ] Recent transaction history
+- [ ] Store private keys securely.
+
+# First step: add fhevm
+
+- [ ] use template to hanldle vite config with wasm
+
+- [ ] use this contract
+      deploying "MyConfidentialERC20" (tx: 0x2856e557ca1e74423ba4189f8b77cd237e18be935fcc9482e86b9e62d94247c2)...: deployed at 0x364EBd827B2F911b1cF1cd9598F124a92f60AaEf with 1407160 gas
+      MyConfidentialERC20 contract: 0x364EBd827B2F911b1cF1cd9598F124a92f60AaEf
+      Alice minted 10000 tokens to herself
+      Alice's account: 0x004f6ab8B0C9977fB5464354aC152d3d1b5605F9
