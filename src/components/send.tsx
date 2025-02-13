@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { useState } from 'react'
-import { useStore } from '../store'
+import { useAppStore } from '../store'
 import { useRPC } from '../providers/rpc'
 
 const DEFAULT_RECIPIENT = '0x004f6ab8B0C9977fB5464354aC152d3d1b5605F9' // main gasp sepolia account
@@ -10,10 +10,10 @@ export function Send() {
   const [isSending, setIsSending] = useState(false)
   const [recipient, setRecipient] = useState(DEFAULT_RECIPIENT)
   const [amount, setAmount] = useState(DEFAULT_AMOUNT)
-  const setTransactions = useStore((state) => state.setTransactions)
-  const transactions = useStore((state) => state.transactions)
-  const signer = useStore((state) => state.signer)
-  const gasPrice = useStore((state) => state.gasPrice)
+  const setTransactions = useAppStore((state) => state.setTransactions)
+  const transactions = useAppStore((state) => state.transactions)
+  const signer = useAppStore((state) => state.signer)
+  const gasPrice = useAppStore((state) => state.gasPrice)
   const { provider } = useRPC()
 
   async function sendTransaction() {

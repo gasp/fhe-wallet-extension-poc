@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from 'react'
 import { ethers } from 'ethers'
-import { useStore } from '../store'
+import { useAppStore } from '../store'
 import { useRPC } from '../providers/rpc'
 
 export function Balance() {
-  const balance = useStore((state) => state.balance)
-  const setBalance = useStore((state) => state.setBalance)
-  const address = useStore((state) => state.address)
+  const balance = useAppStore((state) => state.balance)
+  const setBalance = useAppStore((state) => state.setBalance)
+  const address = useAppStore((state) => state.address)
   const { provider } = useRPC()
 
   const fetchBalance = useCallback(

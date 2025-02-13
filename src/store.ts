@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { ethers } from 'ethers'
 import { Transaction } from './types'
 
-type Store = {
+type AppStore = {
   address: string
   setAddress: (address: string) => void
   balance: string
@@ -15,7 +15,14 @@ type Store = {
   setGasPrice: (gasPrice: bigint) => void
 }
 
-export const useStore = create<Store>((set) => ({
+type AuthStore = {
+  hasWallet: boolean
+  setHasWallet: (hasWallet: boolean) => void
+  isLoggedIn: boolean
+  setIsLoggedIn: (isLoggedIn: boolean) => void
+}
+
+export const useAppStore = create<AppStore>((set) => ({
   balance: '',
   setBalance: (balance: string) => set({ balance }),
   address: '',
@@ -26,4 +33,11 @@ export const useStore = create<Store>((set) => ({
   setTransactions: (transactions: Transaction[]) => set({ transactions }),
   gasPrice: BigInt(0),
   setGasPrice: (gasPrice: bigint) => set({ gasPrice }),
+}))
+
+export const useAuthStore = create<AuthStore>((set) => ({
+  hasWallet: false,
+  setHasWallet: (hasWallet: boolean) => set({ hasWallet }),
+  isLoggedIn: false,
+  setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
 }))

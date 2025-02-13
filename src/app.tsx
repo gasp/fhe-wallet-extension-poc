@@ -1,34 +1,25 @@
-import { useEffect } from 'react'
-import { ethers } from 'ethers'
-import { useStore } from './store'
-import { useRPC } from './providers/rpc'
+import { useEffect, useState } from 'react'
+import { hasEncryptedWalletKey } from './storage'
+import { useAuthStore } from './store'
 
-import { Address } from './components/address'
-import { Balance } from './components/balance'
-import { Send } from './components/send'
-import { Activity } from './components/activity'
-import { GasPrice } from './components/gas-price'
+import { Create } from './components/create'
+import { Login } from './components/login'
+import { Authenticated } from './components/authenticated'
 
 export function App() {
-  const { provider } = useRPC()
-  const setAddress = useStore((state) => state.setAddress)
-  const setSigner = useStore((state) => state.setSigner)
+  const [isLoading, setIsLoading] = useState(true)
+  const hasWallet = useAuthStore((state) => state.hasWallet)
+  const setHasWallet = useAuthStore((state) => state.setHasWallet)
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
 
   useEffect(() => {
-    const wallet = new ethers.Wallet(import.meta.env.VITE_WALLET_PRIVATE_KEY)
-    setAddress(wallet.address)
-    const signer = wallet.connect(provider)
-    setSigner(signer)
-  }, [setAddress, provider, setSigner])
-
-  return (
-    <>
-      <h1>Hello, Sepolia!</h1>
-      <Address />
-      <Balance />
-      <Send />
-      <Activity />
-      <GasPrice />
-    </>
-  )
+    hasEncryptedWalletKey().then((result) => {
+      setHasWallet(result)
+      setIsLoading(false)
+    })
+  })
+  if (isLoading) return <div>Loading...</div>
+  if (!hasWallet) return <Create />
+  if (!isLoggedIn) return <Login />
+  return <Authenticated />
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { formatEther } from 'ethers'
 
-import { useStore } from '../store'
+import { useAppStore } from '../store'
 import { provider as rawProvider } from '../providers/rpc'
 /**
  * get gas price from provider
@@ -15,8 +15,8 @@ export async function getGasPrice(): Promise<bigint> {
 }
 
 export function GasPrice() {
-  const gasPrice = useStore((state) => state.gasPrice)
-  const setGasPrice = useStore((state) => state.setGasPrice)
+  const gasPrice = useAppStore((state) => state.gasPrice)
+  const setGasPrice = useAppStore((state) => state.setGasPrice)
 
   const updateGasPrice = useCallback(async () => {
     try {

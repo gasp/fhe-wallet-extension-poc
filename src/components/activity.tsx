@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
-import { useStore } from '../store'
+import { useAppStore } from '../store'
 
 export function Activity() {
-  const transactions = useStore((state) => state.transactions)
+  const transactions = useAppStore((state) => state.transactions)
   return (
     <section>
       <h3>Transaction Activity ({transactions.length})</h3>

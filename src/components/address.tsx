@@ -1,7 +1,7 @@
-import { useStore } from '../store'
+import { useAppStore } from '../store'
 
 export function Address() {
-  const address = useStore((state) => state.address)
+  const address = useAppStore((state) => state.address)
 
   return (
     <section>
