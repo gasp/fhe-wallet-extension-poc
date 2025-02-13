@@ -1,6 +1,6 @@
 # First step: create a simple autonomous wallet for clear ETH
 
-- [ ] Display current wallet address.
+- [x] Display current wallet address.
 - [x] Show account balance in clear ETH
 - [ ] get gas price
 - [x] make a transaction

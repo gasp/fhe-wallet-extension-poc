@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { useStore } from './store'
 import { useRPC } from './providers/rpc'
 
+import { Address } from './components/address'
 import { Balance } from './components/balance'
 import { Send } from './components/send'
 import { Activity } from './components/activity'
@@ -22,6 +23,7 @@ export function App() {
   return (
     <>
       <h1>Hello, Sepolia!</h1>
+      <Address />
       <Balance />
       <Send />
       <Activity />
