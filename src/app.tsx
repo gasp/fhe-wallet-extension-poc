@@ -5,6 +5,7 @@ import { useRPC } from './providers/rpc'
 
 import { Balance } from './components/balance'
 import { Send } from './components/send'
+import { Activity } from './components/activity'
 
 export function App() {
   const { provider } = useRPC()
@@ -23,6 +24,7 @@ export function App() {
       <h1>Hello, Sepolia!</h1>
       <Balance />
       <Send />
+      <Activity />
     </>
   )
 }

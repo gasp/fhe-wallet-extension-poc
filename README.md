@@ -1,11 +1,12 @@
 # First step: create a simple autonomous wallet for clear ETH
 
 - [ ] Display current wallet address.
-- [ ] Show account balance in clear ETH
+- [x] Show account balance in clear ETH
 - [ ] get gas price
-- [ ] make a transaction
-- [ ] Recent transaction history
+- [x] make a transaction
+- [x] Recent transaction history
 - [ ] Store private keys securely.
+- [ ] Store previous transactions.
 
 # First step: add fhevm
 
