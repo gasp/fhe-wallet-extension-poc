@@ -1,19 +1,13 @@
-import { useEffect, useState } from 'react'
-import { ethers } from 'ethers'
+import { useState } from 'react'
 import { setEncryptedWalletKey } from '../storage'
 import { useAuthStore } from '../store'
 import { encryptPrivateKey } from '../libs/aes'
 
-export function Create() {
+export function Import() {
   const [password, setPassword] = useState('swordfish')
   const [privateKey, setPrivateKey] = useState('')
   const [error, setError] = useState('')
   const setHasWallet = useAuthStore((state) => state.setHasWallet)
-
-  useEffect(() => {
-    const wallet = ethers.Wallet.createRandom()
-    setPrivateKey(wallet.privateKey)
-  }, [])
 
   const storeEncryptedKey = async () => {
     if (!privateKey || !password)
@@ -31,17 +25,17 @@ export function Create() {
 
   return (
     <section>
-      <h1>New wallet</h1>
+      <h1>Import your wallet</h1>
       <p>Disclaimer: I don't know how this is secure, it's for testing only</p>
       <div>
         <input
           type="text"
           placeholder="Wallet Private Key"
           value={privateKey}
-          disabled
+          onChange={(e) => setPrivateKey(e.target.value)}
         />
       </div>
-      <div>(copy this code somewhere)</div>
+      <div>(get this code from your metamask extension)</div>
       <div>
         <input
           placeholder="Enter Password"
@@ -49,10 +43,7 @@ export function Create() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <div>
-        make sure you remember this password, without it your wallet is lost
-      </div>
-      <button onClick={storeEncryptedKey}>Create your wallet</button>
+      <button onClick={storeEncryptedKey}>Import your wallet</button>
 
       {!!error.length && <div style={{ color: 'red' }}>{error}</div>}
     </section>

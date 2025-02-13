@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { hasEncryptedWalletKey } from './storage'
 import { useAuthStore } from './store'
 
-import { Create } from './components/create'
 import { Login } from './components/login'
 import { Authenticated } from './components/authenticated'
+import { New } from './components/new'
 
 export function App() {
   const [isLoading, setIsLoading] = useState(true)
@@ -19,7 +19,7 @@ export function App() {
     })
   })
   if (isLoading) return <div>Loading...</div>
-  if (!hasWallet) return <Create />
+  if (!hasWallet) return <New />
   if (!walletPrivateKey) return <Login />
   return <Authenticated />
 }
