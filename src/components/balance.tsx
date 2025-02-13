@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useStore } from '../store'
 import { useRPC } from '../providers/rpc'
@@ -9,8 +9,8 @@ export function Balance() {
   const address = useStore((state) => state.address)
   const { provider } = useRPC()
 
-  useEffect(() => {
-    async function fetchBalance(address: string) {
+  const fetchBalance = useCallback(
+    async (address: string) => {
       try {
         const balanceWei = await provider.getBalance(address)
         const balanceEth = ethers.formatEther(balanceWei)
@@ -18,9 +18,13 @@ export function Balance() {
       } catch (error) {
         console.error('Error fetching balance:', error)
       }
-    }
+    },
+    [provider, setBalance]
+  )
+
+  useEffect(() => {
     if (address) fetchBalance(address)
-  }, [address, provider, setBalance])
+  }, [address, fetchBalance])
 
   return (
     <div>
@@ -29,6 +33,9 @@ export function Balance() {
         {balance !== null ? <span>{balance}</span> : <span>Loading...</span>}{' '}
         ETH
       </span>
+      <button onClick={() => fetchBalance(address)}>
+        <span>Refresh</span>
+      </button>
     </div>
   )
 }
