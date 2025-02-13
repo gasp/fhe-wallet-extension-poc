@@ -5,11 +5,12 @@
 - [x] get gas price
 - [x] make a transaction
 - [x] Recent transaction history
-- [ ] Store private keys securely.
+- [x] Store private keys securely.
 - [ ] Store previous transactions.
 
-# First step: add fhevm
+# Second step: add fhevm
 
+- [x] integrate with encrytedERC20 smart contract
 - [ ] use template to hanldle vite config with wasm
 
 - [ ] use this contract
@@ -17,3 +18,10 @@
       MyConfidentialERC20 contract: 0x364EBd827B2F911b1cF1cd9598F124a92f60AaEf
       Alice minted 10000 tokens to herself
       Alice's account: 0x004f6ab8B0C9977fB5464354aC152d3d1b5605F9
+
+# thirs step: run it in an extension
+
+- [ ] add extension stuff
+- [ ] create manifest
+- [ ] adapt building
+- [ ] offload to offcreen

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "ethers": "^6.13.5",
+    "fhevmjs": "^0.6.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zustand": "^5.0.3"

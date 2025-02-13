@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react'
 import { ethers } from 'ethers'
-import { useAppStore } from '../store'
-import { useRPC } from '../providers/rpc'
+import { useAppStore } from '../../store'
+import { useRPC } from '../../providers/rpc'
 
-export function Balance() {
+export function BalanceClear() {
   const balance = useAppStore((state) => state.balance)
   const setBalance = useAppStore((state) => state.setBalance)
   const address = useAppStore((state) => state.address)
@@ -31,7 +31,7 @@ export function Balance() {
       Wallet Balance:{' '}
       <span>
         {balance !== null ? <span>{balance}</span> : <span>Loading...</span>}{' '}
-        ETH
+        Clear ETH
       </span>
       <button onClick={() => fetchBalance(address)}>
         <span>Refresh</span>

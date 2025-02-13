@@ -7,6 +7,8 @@ type AppStore = {
   setAddress: (address: string) => void
   balance: string
   setBalance: (balance: string) => void
+  encryptedBalance: string
+  setEncryptedBalance: (encryptedBalance: string) => void
   signer: ethers.Wallet | null
   setSigner: (signer: ethers.Wallet) => void
   transactions: Transaction[]
@@ -25,6 +27,8 @@ type AuthStore = {
 export const useAppStore = create<AppStore>((set) => ({
   balance: '',
   setBalance: (balance: string) => set({ balance }),
+  encryptedBalance: '',
+  setEncryptedBalance: (encryptedBalance: string) => set({ encryptedBalance }),
   address: '',
   setAddress: (address: string) => set({ address }),
   signer: null,
