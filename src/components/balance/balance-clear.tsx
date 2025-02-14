@@ -30,8 +30,7 @@ export function BalanceClear() {
     <div>
       Wallet Balance:{' '}
       <span>
-        {balance !== null ? <span>{balance}</span> : <span>Loading...</span>}{' '}
-        Clear ETH
+        {balance.length ? <span>{balance}</span> : <span>~</span>} Clear ETH
       </span>
       <button onClick={() => fetchBalance(address)}>
         <span>Refresh</span>

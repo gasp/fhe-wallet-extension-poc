@@ -13,7 +13,7 @@ export function Address() {
         rel="noreferrer"
         title="View on Etherscan"
       >
-        👀
+        🔎
       </a>
     </section>
   )

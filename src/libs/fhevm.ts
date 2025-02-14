@@ -11,6 +11,13 @@ export async function init() {
   return initFhevm() // TODO: try with { thread: navigator.hardwareConcurrency }
 }
 
+function toHexString(bytes: Uint8Array) {
+  return (
+    '0x' +
+    bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '')
+  )
+}
+
 export const createFhevmInstance = async () => {
   instance = await createInstance({
     kmsContractAddress: '0x9D6891A6240D6130c54ae243d8005063D05fE14b', // env this
@@ -61,4 +68,20 @@ export async function decryptBalance(
   )
 
   return decryptedBalance
+}
+
+export async function encryptAmount(
+  amount: number,
+  walletPrivateKey: string
+): Promise<{ proof: string; encrypted: string }> {
+  const signer = getSigner(walletPrivateKey)
+
+  const encryptionResult = await instance
+    .createEncryptedInput(ENCRYPTEDERC20_CONTRACT_ADDRESS, signer.address)
+    .add64(amount)
+    .encrypt()
+
+  const proof = toHexString(encryptionResult.inputProof)
+  const encrypted = toHexString(encryptionResult.handles[0])
+  return { encrypted, proof }
 }

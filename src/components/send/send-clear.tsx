@@ -1,12 +1,12 @@
 import { ethers } from 'ethers'
 import { useState } from 'react'
-import { useAppStore } from '../store'
-import { useRPC } from '../providers/rpc'
+import { useAppStore } from '../../store'
+import { useRPC } from '../../providers/rpc'
 
-const DEFAULT_RECIPIENT = '0x004f6ab8B0C9977fB5464354aC152d3d1b5605F9' // main gasp sepolia account
+const DEFAULT_RECIPIENT = '0xA3C78377D77FaadEb6759c87E4A42E854C671671'
 const DEFAULT_AMOUNT = '0.01'
 
-export function Send() {
+export function SendClear() {
   const [isSending, setIsSending] = useState(false)
   const [recipient, setRecipient] = useState(DEFAULT_RECIPIENT)
   const [amount, setAmount] = useState(DEFAULT_AMOUNT)
@@ -43,10 +43,11 @@ export function Send() {
       setTransactions([
         ...transactions,
         {
+          encrypted: false,
           hash,
           status: 'Pending',
           to,
-          amount: txObject.value,
+          amount: ethers.formatEther(txObject.value),
         },
       ])
 
@@ -57,10 +58,11 @@ export function Send() {
       setTransactions([
         ...transactions,
         {
+          encrypted: false,
           hash,
           status: 'Confirmed',
           to,
-          amount: txObject.value,
+          amount: ethers.formatEther(txObject.value),
         },
       ])
     } catch (error) {
@@ -69,10 +71,11 @@ export function Send() {
       setTransactions([
         ...transactions,
         {
+          encrypted: false,
           hash: hash ?? 'no-hash',
           status: 'Failed',
           to,
-          amount: BigInt(parseInt(amount)),
+          amount,
         },
       ])
     }
@@ -82,7 +85,7 @@ export function Send() {
   }
 
   return (
-    <section>
+    <>
       <h3>Send Clear ETH</h3>
       <input
         name="recipient"
@@ -96,11 +99,13 @@ export function Send() {
         type="number"
         placeholder="Amount in ETH"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
+        min={0}
+        onChange={(e) => setAmount(e.target.value || '0')}
       />
+
       <button onClick={sendTransaction} disabled={isSending}>
         {isSending ? 'Sending...' : 'Send'}
       </button>
-    </section>
+    </>
   )
 }

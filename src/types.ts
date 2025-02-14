@@ -1,6 +1,7 @@
 export type Transaction = {
+  encrypted: boolean
   to: string
-  amount: bigint
+  amount: string
   hash: string
-  status: 'Pending' | 'Confirmed' | 'Failed'
+  status: 'Encrypting' | 'Pending' | 'Confirmed' | 'Failed'
 }

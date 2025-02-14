@@ -42,10 +42,10 @@ export function BalanceEncrypted() {
     <div>
       Wallet Balance:{' '}
       <span>
-        {encryptedBalance !== null ? (
+        {encryptedBalance.length ? (
           <span>{encryptedBalance}</span>
         ) : (
-          <span>Loading...</span>
+          <span>~</span>
         )}{' '}
         Encrypted ETH
       </span>

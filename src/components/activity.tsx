@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import { useAppStore } from '../store'
 
 export function Activity() {
@@ -10,9 +9,20 @@ export function Activity() {
         {transactions.map((tx, index) => (
           <li key={index}>
             <div>
-              <code>{tx.to}</code> - {ethers.formatEther(tx.amount)} ETH
+              {tx.encrypted ? '🔒' : '🧾'} <code>{tx.to}</code> - {tx.amount}{' '}
+              {tx.encrypted ? `encrypted ETH` : `ETH`}
             </div>
-            {tx.hash} - {tx.status}
+            {tx.status}{' '}
+            {tx.hash !== 'no-hash' && (
+              <a
+                href={`https://sepolia.etherscan.io/tx/${tx.hash}`}
+                target="_blank"
+                rel="noreferrer"
+                title="View on Etherscan"
+              >
+                🔎
+              </a>
+            )}
           </li>
         ))}
       </ul>
