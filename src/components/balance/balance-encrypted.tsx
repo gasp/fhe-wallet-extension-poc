@@ -2,14 +2,10 @@ import { useCallback, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useAppStore, useAuthStore } from '../../store'
 import { useRPC } from '../../providers/rpc'
-import { init, createFhevmInstance, decryptBalance } from '../../libs/fhevm'
+import { decryptBalance } from '../../libs/fhevm'
 
 const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
   .VITE_ENCRYPTEDERC20_CONTRACT_ADDRESS
-
-init()
-  .then(() => createFhevmInstance())
-  .then(() => console.log('FHEVM ready'))
 
 export function BalanceEncrypted() {
   const encryptedBalance = useAppStore((state) => state.encryptedBalance)
