@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react'
 import { formatEther } from 'ethers'
 
 import { useAppStore } from '../store'
-import { provider as rawProvider } from '../providers/rpc'
+import { provider as rawProvider } from '../libs/eth'
 /**
  * get gas price from provider
  * @returns {bigint} gas price in wei

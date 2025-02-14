@@ -11,7 +11,7 @@
 # Second step: add fhevm
 
 - [x] integrate with encrytedERC20 smart contract
-- [ ] use template to hanldle vite config with wasm
+- [x] update vite config to handle with wasm
 
 - [ ] use this contract
       deploying "MyConfidentialERC20" (tx: 0x2856e557ca1e74423ba4189f8b77cd237e18be935fcc9482e86b9e62d94247c2)...: deployed at 0x364EBd827B2F911b1cF1cd9598F124a92f60AaEf with 1407160 gas
@@ -21,7 +21,7 @@
 
 # thirs step: run it in an extension
 
-- [ ] add extension stuff
-- [ ] create manifest
+- [ ] add extension stuff (icons, manifesto...)
+- [ ] update vite config copy extension stuff
 - [ ] adapt building
 - [ ] offload to offcreen
