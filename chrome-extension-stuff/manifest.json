@@ -1,0 +1,21 @@
+{
+  "name": "FHE Wallet",
+  "description": "ETH Wallet that transfers clear & encryted ETHs",
+  "version": "0.1.0",
+  "permissions": [
+    "offscreen"
+  ],
+  "manifest_version": 3,
+  "icons": {
+    "16": "wallet16.png",
+    "48": "wallet48.png",
+    "128": "wallet128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {}
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  }
+}
