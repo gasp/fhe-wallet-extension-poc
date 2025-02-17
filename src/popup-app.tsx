@@ -28,6 +28,14 @@ export function PopupApp() {
     setDebug({ wallet, ...debug })
   }, [debug])
 
+  const handleLogin = useCallback(async () => {
+    const login = await service({
+      type: 'login',
+      data: { password: 'swordfish' },
+    })
+    setDebug({ login, ...debug })
+  }, [debug])
+
   return (
     <div>
       <button onClick={handleOffScreen}>create offscreen</button>
@@ -36,6 +44,7 @@ export function PopupApp() {
         <div>
           <button onClick={handleMessage}>create message</button>
           <button onClick={handleCreateWallet}>create wallet</button>
+          <button onClick={handleLogin}>login</button>
         </div>
       )}
       <pre style={{ width: '300px', height: '300px', overflow: 'scroll' }}>

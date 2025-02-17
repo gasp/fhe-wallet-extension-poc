@@ -1,7 +1,8 @@
 import { ethers } from 'ethers'
 import { createFhevmInstance } from './libs/fhevm'
-import { encryptPrivateKey } from './libs/aes'
+import { decryptPrivateKey, encryptPrivateKey } from './libs/aes'
 import { OffscreenRequest, OffscreenResponse } from './libs/messages'
+import { getSigner } from './libs/eth'
 import { getEncryptedWalletKey, setEncryptedWalletKey } from './storage'
 
 chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
@@ -18,9 +19,15 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         talk('wallet-create-random', true)
         break
 
+      case 'login':
+        // eslint-disable-next-line no-case-declarations
+        const result = await login(message.data.password)
+        talk('login', result)
+        break
+
       case 'ping':
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        talk('ping', chrome)
+        talk('ping', 'pong')
         break
       default:
         throw new Error(`Unrecognized message: ${message.type}`)
@@ -51,4 +58,25 @@ async function WalletCreateRandom(password: string) {
   const { encrypted, iv } = await encryptPrivateKey(password, privateKey)
   await setEncryptedWalletKey({ encrypted, iv })
   return
+}
+
+let signer: null | ethers.Wallet = null
+
+async function login(password: string) {
+  try {
+    const { encrypted, iv } = await getEncryptedWalletKey()
+    if (!encrypted || !iv) {
+      console.error('No encrypted key found')
+      return false
+    }
+    const decrypted = await decryptPrivateKey(password, encrypted, iv)
+
+    signer = getSigner(decrypted)
+    const { address } = signer
+    return { address }
+  } catch (error) {
+    console.error(error)
+    console.log(`Error decrypting key: ${error}`)
+    return false
+  }
 }
