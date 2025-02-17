@@ -1,52 +1,22 @@
+import { createFhevmInstance } from './libs/fhevm'
+import { OffscreenRequest, OffscreenResponse } from './libs/messages'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const chrome: any
-type ChromeMessage =
-  | PingMessage
-  | EncryptMessage
-  | InitializeWasmMessage
-  | UnknownMessage
 
-type PingMessage = {
-  type: 'ping'
-  target: 'offscreen' | 'main'
-  data: 'ping' | 'pong'
-}
-
-type EncryptMessage = {
-  type: 'encrypt'
-  target: 'offscreen' | 'main'
-  data: number
-}
-
-type InitializeWasmMessage = {
-  type: 'initialize-wasm'
-  target: 'offscreen' | 'main'
-  data: boolean
-}
-
-// what if an unknown message arrives?
-type UnknownMessage = {
-  type: 'unknown'
-  target: 'offscreen' | 'main'
-  data: string
-}
-
-chrome.runtime.onMessage.addListener(async (message: ChromeMessage) => {
+chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
   if (message.target === 'offscreen') {
     switch (message.type) {
       case 'initialize-wasm':
-        await new Promise((resolve) => setTimeout(resolve, 100))
-        talk('initialize-wasm', true)
+        // eslint-disable-next-line no-case-declarations
+        const instance = await createFhevmInstance()
+        talk('initialize-wasm', !!instance)
         break
+
       case 'ping':
+        await new Promise((resolve) => setTimeout(resolve, 1000))
         // should spawn some web workers + wasm
         // should return a message to the main thread
         talk('ping', 'pong')
-        break
-      case 'encrypt':
-        // encrypt(message.data as number).catch((error) => {
-        //   talk('error', error.message)
-        // })
         break
       default:
         throw new Error(`Unrecognized message: ${message.type}`)
@@ -54,10 +24,19 @@ chrome.runtime.onMessage.addListener(async (message: ChromeMessage) => {
   }
 })
 
-function talk(type: ChromeMessage['type'], payload: ChromeMessage['data']) {
-  chrome.runtime.sendMessage({
-    type,
-    target: 'offscreen',
-    data: payload,
-  } as ChromeMessage)
+function talk(
+  type: OffscreenResponse['type'],
+  payload: OffscreenResponse['data']
+) {
+  try {
+    chrome.runtime.sendMessage({
+      type,
+      target: 'main',
+      data: payload,
+    } as OffscreenResponse)
+  } catch (error) {
+    console.error('Error sending message', error)
+    console.log(type, payload)
+    throw error
+  }
 }

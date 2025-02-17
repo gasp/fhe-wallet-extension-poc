@@ -7,10 +7,6 @@ const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
 
 let instance: FhevmInstance
 
-export async function init() {
-  return initFhevm() // TODO: try with { thread: navigator.hardwareConcurrency }
-}
-
 function toHexString(bytes: Uint8Array) {
   return (
     '0x' +
@@ -19,6 +15,7 @@ function toHexString(bytes: Uint8Array) {
 }
 
 export const createFhevmInstance = async () => {
+  await initFhevm() // TODO: try with { thread: navigator.hardwareConcurrency }
   instance = await createInstance({
     kmsContractAddress: '0x9D6891A6240D6130c54ae243d8005063D05fE14b', // env this
     aclContractAddress: '0xFee8407e2f5e3Ee68ad77cAE98c434e637f516e5', // env this too

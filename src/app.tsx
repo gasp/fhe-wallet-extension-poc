@@ -19,7 +19,7 @@ export function App() {
       try {
         const [wallet, fhevm] = await Promise.all([
           hasEncryptedWalletKey(),
-          init().then(() => createFhevmInstance()),
+          createFhevmInstance(),
         ])
         setHasWallet(wallet)
         setIsWasm(!!fhevm)
@@ -35,7 +35,7 @@ export function App() {
     return (
       <div>
         <b>Loading</b>
-        <br /> searching for storage and instanciating wasm ...
+        <br /> searching for storage and instantiating wasm ...
       </div>
     )
   if (!isWasm) return <div>Wasm not supported</div>
