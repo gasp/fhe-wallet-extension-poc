@@ -3,7 +3,8 @@
   "description": "ETH Wallet that transfers clear & encryted ETHs",
   "version": "0.1.0",
   "permissions": [
-    "offscreen"
+    "offscreen",
+    "storage"
   ],
   "manifest_version": 3,
   "icons": {

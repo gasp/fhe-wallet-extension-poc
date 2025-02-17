@@ -15,6 +15,7 @@ function toHexString(bytes: Uint8Array) {
 }
 
 export const createFhevmInstance = async () => {
+  if (instance) return instance
   await initFhevm() // TODO: try with { thread: navigator.hardwareConcurrency }
   instance = await createInstance({
     kmsContractAddress: '0x9D6891A6240D6130c54ae243d8005063D05fE14b', // env this

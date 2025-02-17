@@ -1,7 +1,8 @@
+import { ethers } from 'ethers'
 import { createFhevmInstance } from './libs/fhevm'
+import { encryptPrivateKey } from './libs/aes'
 import { OffscreenRequest, OffscreenResponse } from './libs/messages'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const chrome: any
+import { getEncryptedWalletKey, setEncryptedWalletKey } from './storage'
 
 chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
   if (message.target === 'offscreen') {
@@ -12,11 +13,14 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         talk('initialize-wasm', !!instance)
         break
 
+      case 'wallet-create-random':
+        await WalletCreateRandom(message.data.password)
+        talk('wallet-create-random', true)
+        break
+
       case 'ping':
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        // should spawn some web workers + wasm
-        // should return a message to the main thread
-        talk('ping', 'pong')
+        talk('ping', chrome)
         break
       default:
         throw new Error(`Unrecognized message: ${message.type}`)
@@ -39,4 +43,12 @@ function talk(
     console.log(type, payload)
     throw error
   }
+}
+
+async function WalletCreateRandom(password: string) {
+  const wallet = ethers.Wallet.createRandom()
+  const privateKey = wallet.privateKey
+  const { encrypted, iv } = await encryptPrivateKey(password, privateKey)
+  await setEncryptedWalletKey({ encrypted, iv })
+  return
 }

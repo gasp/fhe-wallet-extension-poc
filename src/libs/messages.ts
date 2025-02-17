@@ -1,10 +1,12 @@
 export type OffscreenRequest =
   | PingRequest
   | InitializeWasmRequest
+  | WalletCreateRandomRequest
   | UnknownMessage
 export type OffscreenResponse =
   | PingResponse
   | InitializeWasmResponse
+  | WalletCreateRandomResponse
   | UnknownMessage
 
 type PingRequest = {
@@ -28,6 +30,18 @@ type InitializeWasmRequest = {
 
 type InitializeWasmResponse = {
   type: 'initialize-wasm'
+  target: 'main'
+  data: boolean
+}
+
+type WalletCreateRandomRequest = {
+  type: 'wallet-create-random'
+  target: 'offscreen'
+  data: { password: string }
+}
+
+type WalletCreateRandomResponse = {
+  type: 'wallet-create-random'
   target: 'main'
   data: boolean
 }

@@ -19,12 +19,24 @@ export function PopupApp() {
     const wasm = await service({ type: 'initialize-wasm', data: null })
     setDebug({ wasm, response, ...debug })
   }, [debug])
+
+  const handleCreateWallet = useCallback(async () => {
+    const wallet = await service({
+      type: 'wallet-create-random',
+      data: { password: 'swordfish' },
+    })
+    setDebug({ wallet, ...debug })
+  }, [debug])
+
   return (
     <div>
       <button onClick={handleOffScreen}>create offscreen</button>
 
       {isOffscreenCreated && (
-        <button onClick={handleMessage}>create message</button>
+        <div>
+          <button onClick={handleMessage}>create message</button>
+          <button onClick={handleCreateWallet}>create wallet</button>
+        </div>
       )}
       <pre style={{ width: '300px', height: '300px', overflow: 'scroll' }}>
         {JSON.stringify(debug, null, 2)}

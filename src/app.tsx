@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { hasEncryptedWalletKey } from './storage'
 import { useAuthStore } from './store'
-import { init, createFhevmInstance } from './libs/fhevm'
+import { createFhevmInstance } from './libs/fhevm'
 
 import { Login } from './components/login'
 import { Authenticated } from './components/authenticated'
