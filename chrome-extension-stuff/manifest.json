@@ -1,5 +1,5 @@
 {
-  "name": "FHE Wallet",
+  "name": "Wallet Extension",
   "description": "ETH Wallet that transfers clear & encryted ETHs",
   "version": "0.1.0",
   "permissions": [
