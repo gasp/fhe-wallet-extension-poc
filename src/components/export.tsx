@@ -27,7 +27,12 @@ export function ExportWallet() {
       <h1>Export your wallet</h1>
       <p>Disclaimer: I don't know how this is secure, it's for testing only</p>
       {privateKey.length ? (
-        <pre>{privateKey}</pre>
+        <textarea
+          value={privateKey}
+          readOnly
+          style={{ width: '310px' }}
+          rows={3}
+        ></textarea>
       ) : (
         <>
           <div>
@@ -36,6 +41,7 @@ export function ExportWallet() {
               placeholder="Enter Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              style={{ width: '50%', margin: '1rem 0' }}
             />
           </div>
           <button onClick={onExport}>Export your wallet</button>

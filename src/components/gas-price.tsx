@@ -35,7 +35,7 @@ export function GasPrice() {
   }, [updateGasPrice])
 
   return (
-    <div style={{ position: 'fixed', bottom: '1rem' }}>
+    <div style={{ position: 'fixed', bottom: '0.1rem' }}>
       gas Price: {gasPrice} ETH{' '}
       <button className="refresh" disabled={loading} onClick={updateGasPrice}>
         <span>⟳</span>
