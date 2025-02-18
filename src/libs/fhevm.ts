@@ -1,6 +1,5 @@
 import { initFhevm, createInstance, FhevmInstance } from 'fhevmjs'
-import { getSigner } from './eth'
-import { Signer } from 'ethers'
+import { Signer, Wallet } from 'ethers'
 
 const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
   .VITE_ENCRYPTEDERC20_CONTRACT_ADDRESS
@@ -55,9 +54,8 @@ async function reencryptHandle(
 
 export async function decryptBalance(
   encryptedBalance: bigint,
-  walletPrivateKey: string // TODO: this should be stored locally in the offscreen and not sent by sendMessage
+  signer: Signer
 ): Promise<bigint> {
-  const signer = getSigner(walletPrivateKey)
   const decryptedBalance = await reencryptHandle(
     signer,
     instance,
@@ -70,10 +68,8 @@ export async function decryptBalance(
 
 export async function encryptAmount(
   amount: number,
-  walletPrivateKey: string
+  signer: Wallet
 ): Promise<{ proof: string; encrypted: string }> {
-  const signer = getSigner(walletPrivateKey)
-
   const encryptionResult = await instance
     .createEncryptedInput(ENCRYPTEDERC20_CONTRACT_ADDRESS, signer.address)
     .add64(amount)

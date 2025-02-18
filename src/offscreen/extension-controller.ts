@@ -1,4 +1,4 @@
-import { ethers, formatEther } from 'ethers'
+import { ethers, formatEther, Wallet } from 'ethers'
 import {
   createFhevmInstance,
   decryptBalance,
@@ -21,7 +21,7 @@ import {
 const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
   .VITE_ENCRYPTEDERC20_CONTRACT_ADDRESS
 
-let signer: null | ethers.Wallet = null
+let signer: null | Wallet = null
 
 export async function initialize() {
   return await createFhevmInstance()
@@ -108,7 +108,7 @@ export async function balanceEncrypted() {
     signer
   )
   const encryptedBalance: bigint = await contract.balanceOf(signer.address)
-  const decrypted = await decryptBalance(encryptedBalance, signer.privateKey)
+  const decrypted = await decryptBalance(encryptedBalance, signer)
   return decrypted.toString()
 }
 
@@ -160,7 +160,7 @@ export async function sendEncrypted({ to, amount }: SendClearRequest['data']) {
 
     const { encrypted, proof } = await encryptAmount(
       parseInt(amount, 10),
-      signer.privateKey
+      signer
     )
     const contractArgs = [to, encrypted, proof]
 
