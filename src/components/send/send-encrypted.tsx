@@ -44,7 +44,7 @@ export function SendEncrypted() {
       const { hash } = transaction
       setTransactions([
         {
-          encrypted: false,
+          encrypted: true,
           hash,
           status: 'Confirmed',
           to: recipient,

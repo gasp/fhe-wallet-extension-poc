@@ -15,6 +15,7 @@ import {
 import { OffscreenRequest, OffscreenResponse } from '../libs/messages'
 
 chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
+  console.log('received message', message)
   if (message.target === 'offscreen') {
     switch (message.type) {
       case 'initialize-wasm':
