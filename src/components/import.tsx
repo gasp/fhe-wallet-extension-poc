@@ -1,25 +1,27 @@
 import { useCallback, useState } from 'react'
 import { service } from '../libs/offscreeen-service'
+import { usePopupStore } from '../store'
 
 export function Import() {
   const [password, setPassword] = useState('swordfish')
   const [privateKey, setPrivateKey] = useState('')
   const [error, setError] = useState('')
+  const setHasWallet = usePopupStore((state) => state.setHasWallet)
 
   const onImport = useCallback(async () => {
     if (!privateKey || !password)
       return setError('Enter private key and password')
     try {
-      await service({
+      const imported = await service({
         type: 'wallet-import',
         data: { walletPrivateKey: privateKey, password },
       })
-      setError('')
+      if (imported) setHasWallet(true)
     } catch (error) {
       console.error(error)
       setError(`Error encrypting key ${error}`)
     }
-  }, [privateKey, password])
+  }, [privateKey, password, setHasWallet])
 
   return (
     <section>
