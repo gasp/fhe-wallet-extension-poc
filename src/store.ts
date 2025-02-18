@@ -2,6 +2,13 @@ import { create } from 'zustand'
 import { ethers } from 'ethers'
 import { Transaction } from './types'
 
+type PopupStore = {
+  hasWallet: boolean
+  setHasWallet: (hasWallet: boolean) => void
+  address: string
+  setAddress: (address: string) => void
+}
+
 type AppStore = {
   address: string
   setAddress: (address: string) => void
@@ -23,6 +30,13 @@ type AuthStore = {
   walletPrivateKey: string
   setWalletPrivateKey: (walletPrivateKey: string) => void
 }
+
+export const usePopupStore = create<PopupStore>((set) => ({
+  hasWallet: false,
+  setHasWallet: (hasWallet: boolean) => set({ hasWallet }),
+  address: '',
+  setAddress: (address: string) => set({ address }),
+}))
 
 export const useAppStore = create<AppStore>((set) => ({
   balance: '',

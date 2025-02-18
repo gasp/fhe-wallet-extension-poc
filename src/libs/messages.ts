@@ -1,15 +1,17 @@
 export type OffscreenRequest =
   | PingRequest
   | InitializeWasmRequest
+  | WalletExistsRequest
   | WalletCreateRandomRequest
   | LoginRequest
-  | UnknownMessage
+// | UnknownMessage
 export type OffscreenResponse =
   | PingResponse
   | InitializeWasmResponse
+  | WalletExistsResponse
   | WalletCreateRandomResponse
   | LoginResponse
-  | UnknownMessage
+// | UnknownMessage
 
 type PingRequest = {
   type: 'ping'
@@ -36,6 +38,18 @@ type InitializeWasmResponse = {
   data: boolean
 }
 
+type WalletExistsRequest = {
+  type: 'wallet-exists'
+  target: 'offscreen'
+  data: null
+}
+
+type WalletExistsResponse = {
+  type: 'wallet-exists'
+  target: 'main'
+  data: boolean
+}
+
 type WalletCreateRandomRequest = {
   type: 'wallet-create-random'
   target: 'offscreen'
@@ -54,14 +68,8 @@ type LoginRequest = {
   data: { password: string }
 }
 
-type LoginResponse = {
+export type LoginResponse = {
   type: 'login'
   target: 'main'
   data: { address: string }
-}
-
-type UnknownMessage = {
-  type: 'unknown'
-  target: 'offscreen' | 'main'
-  data: unknown
 }

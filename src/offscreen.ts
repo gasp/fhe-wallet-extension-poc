@@ -3,7 +3,11 @@ import { createFhevmInstance } from './libs/fhevm'
 import { decryptPrivateKey, encryptPrivateKey } from './libs/aes'
 import { OffscreenRequest, OffscreenResponse } from './libs/messages'
 import { getSigner } from './libs/eth'
-import { getEncryptedWalletKey, setEncryptedWalletKey } from './storage'
+import {
+  getEncryptedWalletKey,
+  hasEncryptedWalletKey,
+  setEncryptedWalletKey,
+} from './storage'
 
 chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
   if (message.target === 'offscreen') {
@@ -14,9 +18,16 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         talk('initialize-wasm', !!instance)
         break
 
+      case 'wallet-exists':
+        // eslint-disable-next-line no-case-declarations
+        const exists = await WalletExists()
+        talk('wallet-exists', exists)
+        break
+
       case 'wallet-create-random':
-        await WalletCreateRandom(message.data.password)
-        talk('wallet-create-random', true)
+        // eslint-disable-next-line no-case-declarations
+        const wallet = await WalletCreateRandom(message.data.password)
+        talk('wallet-create-random', wallet)
         break
 
       case 'login':
@@ -52,12 +63,17 @@ function talk(
   }
 }
 
+async function WalletExists() {
+  const exists = await hasEncryptedWalletKey()
+  return exists
+}
+
 async function WalletCreateRandom(password: string) {
   const wallet = ethers.Wallet.createRandom()
   const privateKey = wallet.privateKey
   const { encrypted, iv } = await encryptPrivateKey(password, privateKey)
   await setEncryptedWalletKey({ encrypted, iv })
-  return
+  return true
 }
 
 let signer: null | ethers.Wallet = null

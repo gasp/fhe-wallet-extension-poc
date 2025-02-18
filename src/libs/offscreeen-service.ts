@@ -30,7 +30,10 @@ class MinimalEventBus extends EventTarget {
     this.addEventListener(eventName, handler as EventListener)
   }
 
-  emit(eventName: OffscreenRequest['type'], detail: OffscreenRequest['data']) {
+  emit(
+    eventName: OffscreenResponse['type'],
+    detail: OffscreenResponse['data']
+  ) {
     this.dispatchEvent(new CustomEvent(eventName, { detail }))
   }
 }
@@ -50,7 +53,7 @@ export async function service({
   return new Promise((resolve) => {
     // TODO: create a timeout that rejects the promise if no response is received
     // and once clears the timeout
-    eventBus.once(type, async (response) => {
+    eventBus.once(type, async (response: OffscreenResponse['data']) => {
       console.log('service: Received message', type, response)
       resolve(response)
     })
