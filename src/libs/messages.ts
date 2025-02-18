@@ -8,6 +8,7 @@ export type OffscreenRequest =
   | BalanceClearRequest
   | BalanceEncryptedRequest
   | SendClearRequest
+  | SendEncryptedRequest
 export type OffscreenResponse =
   | PingResponse
   | InitializeWasmResponse
@@ -18,6 +19,7 @@ export type OffscreenResponse =
   | BalanceClearResponse
   | BalanceEncryptedResponse
   | SendClearResponse
+  | SendEncryptedResponse
 
 type PingRequest = {
   type: 'ping'
@@ -124,6 +126,18 @@ export type SendClearRequest = {
 
 export type SendClearResponse = {
   type: 'send-clear'
+  target: 'main'
+  data: { hash: string } | false
+}
+
+export type SendEncryptedRequest = {
+  type: 'send-encrypted'
+  target: 'offscreen'
+  data: { to: string; amount: string }
+}
+
+export type SendEncryptedResponse = {
+  type: 'send-encrypted'
   target: 'main'
   data: { hash: string } | false
 }

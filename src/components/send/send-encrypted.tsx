@@ -1,98 +1,68 @@
-import { ethers } from 'ethers'
 import { useState } from 'react'
-import { useAppStore, useAuthStore } from '../../store'
-import { encryptAmount } from '../../libs/fhevm'
+import { usePopupStore } from '../../store'
+import { service } from '../../libs/offscreeen-service'
+import { SendEncryptedResponse } from '../../libs/messages'
 
 const DEFAULT_RECIPIENT = '0xA3C78377D77FaadEb6759c87E4A42E854C671671'
 const DEFAULT_AMOUNT = '10'
-const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
-  .VITE_ENCRYPTEDERC20_CONTRACT_ADDRESS
 
 export function SendEncrypted() {
   const [isSending, setIsSending] = useState(false)
   const [recipient, setRecipient] = useState(DEFAULT_RECIPIENT)
   const [amount, setAmount] = useState(DEFAULT_AMOUNT)
-  const setTransactions = useAppStore((state) => state.setTransactions)
-  const transactions = useAppStore((state) => state.transactions)
-  const signer = useAppStore((state) => state.signer)
-  const walletPrivateKey = useAuthStore((state) => state.walletPrivateKey)
+  const setTransactions = usePopupStore((state) => state.setTransactions)
+  const transactions = usePopupStore((state) => state.transactions)
 
   async function sendTransaction() {
-    if (!recipient || !amount || !signer) {
-      console.error('Recipient, amount, or signer not set', {
-        recipient,
-        amount,
-        signer,
-      })
-      return
-    }
     setIsSending(true)
-    let hash: string | null = null
-    const to = recipient
     try {
+      if (!recipient || !amount) {
+        console.error('Recipient or  not set', {
+          recipient,
+          amount,
+        })
+        throw new Error('Recipient or amount not set')
+      }
       setTransactions([
-        ...transactions,
         {
           encrypted: true,
           hash: 'no-hash',
-          status: 'Encrypting',
-          to,
-          amount,
-        },
-      ])
-
-      const contract = new ethers.Contract(
-        ENCRYPTEDERC20_CONTRACT_ADDRESS,
-        ['function transfer(address,bytes32,bytes) external returns (bool)'],
-        signer
-      )
-
-      const { encrypted, proof } = await encryptAmount(
-        parseInt(amount, 10),
-        walletPrivateKey
-      )
-      const contractArgs = [to, encrypted, proof]
-
-      const tx = await contract.transfer(...contractArgs)
-
-      hash = tx.hash
-      setTransactions([
-        ...transactions,
-        {
-          encrypted: true,
-          hash: hash ?? 'no-hash',
           status: 'Pending',
-          to,
+          to: recipient,
           amount,
         },
-      ])
-
-      await tx.wait()
-
-      // NOTE: this is not redux
-      // transactions have't been updated yet by latest setTransactions
-      setTransactions([
         ...transactions,
+      ])
+      const transaction = (await service({
+        type: 'send-encrypted',
+        data: { to: recipient, amount },
+      })) as SendEncryptedResponse['data']
+      if (!transaction) {
+        console.error('Error sending transaction')
+        throw new Error('Error sending transaction')
+      }
+      const { hash } = transaction
+      setTransactions([
         {
-          encrypted: true,
-          hash: hash ?? 'no-hash',
+          encrypted: false,
+          hash,
           status: 'Confirmed',
-          to,
+          to: recipient,
           amount,
         },
+        ...transactions,
       ])
     } catch (error) {
       console.error('Error sending transaction:', error)
-
       setTransactions([
-        ...transactions,
         {
-          encrypted: false,
-          hash: hash ?? 'no-hash',
+          encrypted: true,
+          hash: 'no-hash',
           status: 'Failed',
-          to,
+          to: recipient,
           amount,
         },
+        ...transactions,
       ])
     }
     setIsSending(false)
@@ -104,6 +74,7 @@ export function SendEncrypted() {
     <>
       <h3>Send Encrypted ETH</h3>
       <input
+        style={{ width: '150px' }}
         name="recipient"
         type="text"
         placeholder="Recipient Address"
@@ -111,9 +82,10 @@ export function SendEncrypted() {
         onChange={(e) => setRecipient(e.target.value)}
       />
       <input
+        style={{ width: '40px', margin: '0 10px' }}
         name="amount"
         type="number"
-        placeholder="Amount in ETH"
+        placeholder="Amount in Encrypted ETH"
         value={amount}
         min={0}
         onChange={(e) => setAmount(e.target.value || '0')}

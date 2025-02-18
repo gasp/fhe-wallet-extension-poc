@@ -1,5 +1,9 @@
 import { ethers } from 'ethers'
-import { createFhevmInstance, decryptBalance } from './libs/fhevm'
+import {
+  createFhevmInstance,
+  decryptBalance,
+  encryptAmount,
+} from './libs/fhevm'
 import { decryptPrivateKey, encryptPrivateKey } from './libs/aes'
 import {
   OffscreenRequest,
@@ -66,6 +70,12 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         // eslint-disable-next-line no-case-declarations
         const transactionClear = await sendClear(message.data)
         talk('send-clear', transactionClear)
+        break
+
+      case 'send-encrypted':
+        // eslint-disable-next-line no-case-declarations
+        const transactionEncrypted = await sendEncrypted(message.data)
+        talk('send-encrypted', transactionEncrypted)
         break
 
       case 'ping':
@@ -187,6 +197,38 @@ async function sendClear({ to, amount }: SendClearRequest['data']) {
     }
 
     const tx = await signer.sendTransaction(txObject)
+    await tx.wait()
+    return { hash: tx.hash }
+  } catch (error) {
+    console.error('Error sending transaction:', error)
+    return false
+  }
+}
+
+async function sendEncrypted({ to, amount }: SendClearRequest['data']) {
+  if (!signer) {
+    console.error('No signer found')
+    return false
+  }
+  if (!signer.provider) {
+    console.error('No provider found')
+    return false
+  }
+  try {
+    const contract = new ethers.Contract(
+      ENCRYPTEDERC20_CONTRACT_ADDRESS,
+      ['function transfer(address,bytes32,bytes) external returns (bool)'],
+      signer
+    )
+
+    const { encrypted, proof } = await encryptAmount(
+      parseInt(amount, 10),
+      signer.privateKey
+    )
+    const contractArgs = [to, encrypted, proof]
+
+    const tx = await contract.transfer(...contractArgs)
+
     await tx.wait()
     return { hash: tx.hash }
   } catch (error) {

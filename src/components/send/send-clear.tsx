@@ -23,6 +23,16 @@ export function SendClear() {
         })
         throw new Error('Recipient or amount not set')
       }
+      setTransactions([
+        {
+          encrypted: false,
+          hash: 'no-hash',
+          status: 'Pending',
+          to: recipient,
+          amount,
+        },
+        ...transactions,
+      ])
       const transaction = (await service({
         type: 'send-clear',
         data: { to: recipient, amount },
@@ -34,7 +44,6 @@ export function SendClear() {
       const { hash } = transaction
       setIsSending(true)
       setTransactions([
-        ...transactions,
         {
           encrypted: false,
           hash,
@@ -42,11 +51,11 @@ export function SendClear() {
           to: recipient,
           amount,
         },
+        ...transactions,
       ])
     } catch (error) {
       console.error('Error sending transaction:', error)
       setTransactions([
-        ...transactions,
         {
           encrypted: false,
           hash: 'no-hash',
@@ -54,6 +63,7 @@ export function SendClear() {
           to: recipient,
           amount,
         },
+        ...transactions,
       ])
     }
     setIsSending(false)
@@ -63,7 +73,6 @@ export function SendClear() {
 
   return (
     <>
-      {isSending && <h3>Sending...</h3>}
       <h3>Send Clear ETH</h3>
       <input
         style={{ width: '150px' }}
