@@ -1,42 +1,33 @@
 import { useCallback, useEffect } from 'react'
-import { ethers } from 'ethers'
-import { useAppStore, useAuthStore } from '../../store'
-import { useRPC } from '../../providers/rpc'
-import { decryptBalance } from '../../libs/fhevm'
-
-const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
-  .VITE_ENCRYPTEDERC20_CONTRACT_ADDRESS
+import { usePopupStore } from '../../store'
+import { service } from '../../libs/offscreeen-service'
+import { BalanceEncryptedResponse } from '../../libs/messages'
 
 export function BalanceEncrypted() {
-  const encryptedBalance = useAppStore((state) => state.encryptedBalance)
-  const setEncryptedBalance = useAppStore((state) => state.setEncryptedBalance)
-  const address = useAppStore((state) => state.address)
-  const walletPrivateKey = useAuthStore((state) => state.walletPrivateKey)
-  const { provider } = useRPC()
-
-  const handleFetchEncryptBalance = useCallback(
-    async (address: string) => {
-      try {
-        const contract = new ethers.Contract(
-          ENCRYPTEDERC20_CONTRACT_ADDRESS,
-          ['function balanceOf(address) view returns (uint256)'],
-          provider
-        )
-        const encryptedBalance: bigint = await contract.balanceOf(address)
-        const decrypted = await decryptBalance(
-          encryptedBalance,
-          walletPrivateKey
-        )
-        setEncryptedBalance(decrypted.toString())
-      } catch (error) {
-        console.error('Error fetching or decrypting balance:', error)
-      }
-    },
-    [provider, setEncryptedBalance, walletPrivateKey]
+  const encryptedBalance = usePopupStore((state) => state.encryptedBalance)
+  const setEncryptedBalance = usePopupStore(
+    (state) => state.setEncryptedBalance
   )
+
+  const handleFetchEncryptBalance = useCallback(async () => {
+    try {
+      const balanceEnc = (await service({
+        type: 'balance-encrypted',
+        data: null,
+      })) as BalanceEncryptedResponse['data']
+
+      if (!balanceEnc) {
+        console.error('No encrypted balance found')
+        return
+      }
+      setEncryptedBalance(balanceEnc)
+    } catch (error) {
+      console.error('Error fetching or decrypting balance:', error)
+    }
+  }, [setEncryptedBalance])
   useEffect(() => {
-    if (address) handleFetchEncryptBalance(address)
-  }, [address, handleFetchEncryptBalance])
+    handleFetchEncryptBalance()
+  }, [handleFetchEncryptBalance])
 
   return (
     <div>
@@ -49,7 +40,7 @@ export function BalanceEncrypted() {
         )}{' '}
         Encrypted ETH
       </span>
-      <button onClick={() => handleFetchEncryptBalance(address)}>
+      <button onClick={handleFetchEncryptBalance}>
         <span>Refresh</span>
       </button>
       {encryptedBalance === '0' && (

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { createFhevmInstance } from './libs/fhevm'
+import { createFhevmInstance, decryptBalance } from './libs/fhevm'
 import { decryptPrivateKey, encryptPrivateKey } from './libs/aes'
 import { OffscreenRequest, OffscreenResponse } from './libs/messages'
 import { getSigner } from './libs/eth'
@@ -9,6 +9,9 @@ import {
   removeEncryptedWalletKey,
   setEncryptedWalletKey,
 } from './storage'
+
+const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
+  .VITE_ENCRYPTEDERC20_CONTRACT_ADDRESS
 
 chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
   if (message.target === 'offscreen') {
@@ -39,14 +42,20 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
 
       case 'login':
         // eslint-disable-next-line no-case-declarations
-        const result = await login(message.data.password)
-        talk('login', result)
+        const loggedin = await login(message.data.password)
+        talk('login', loggedin)
         break
 
       case 'balance-clear':
         // eslint-disable-next-line no-case-declarations
-        const balance = await balanceClear()
-        talk('balance-clear', balance)
+        const balancec = await balanceClear()
+        talk('balance-clear', balancec)
+        break
+
+      case 'balance-encrypted':
+        // eslint-disable-next-line no-case-declarations
+        const balancee = await balanceEncrypted()
+        talk('balance-encrypted', balancee)
         break
 
       case 'ping':
@@ -127,4 +136,23 @@ async function balanceClear() {
   }
   const balanceWei = await signer.provider.getBalance(signer.address)
   return ethers.formatEther(balanceWei)
+}
+
+async function balanceEncrypted() {
+  if (!signer) {
+    console.error('No signer found')
+    return false
+  }
+  if (!signer.provider) {
+    console.error('No provider found')
+    return false
+  }
+  const contract = new ethers.Contract(
+    ENCRYPTEDERC20_CONTRACT_ADDRESS,
+    ['function balanceOf(address) view returns (uint256)'],
+    signer
+  )
+  const encryptedBalance: bigint = await contract.balanceOf(signer.address)
+  const decrypted = await decryptBalance(encryptedBalance, signer.privateKey)
+  return decrypted.toString()
 }
