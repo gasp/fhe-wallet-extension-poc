@@ -1,7 +1,11 @@
 import { ethers } from 'ethers'
 import { createFhevmInstance, decryptBalance } from './libs/fhevm'
 import { decryptPrivateKey, encryptPrivateKey } from './libs/aes'
-import { OffscreenRequest, OffscreenResponse } from './libs/messages'
+import {
+  OffscreenRequest,
+  OffscreenResponse,
+  SendClearRequest,
+} from './libs/messages'
 import { getSigner } from './libs/eth'
 import {
   getEncryptedWalletKey,
@@ -56,6 +60,12 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         // eslint-disable-next-line no-case-declarations
         const balancee = await balanceEncrypted()
         talk('balance-encrypted', balancee)
+        break
+
+      case 'send-clear':
+        // eslint-disable-next-line no-case-declarations
+        const transactionClear = await sendClear(message.data)
+        talk('send-clear', transactionClear)
         break
 
       case 'ping':
@@ -155,4 +165,32 @@ async function balanceEncrypted() {
   const encryptedBalance: bigint = await contract.balanceOf(signer.address)
   const decrypted = await decryptBalance(encryptedBalance, signer.privateKey)
   return decrypted.toString()
+}
+
+async function sendClear({ to, amount }: SendClearRequest['data']) {
+  if (!signer) {
+    console.error('No signer found')
+    return false
+  }
+  if (!signer.provider) {
+    console.error('No provider found')
+    return false
+  }
+
+  try {
+    const txObject = {
+      to,
+      value: ethers.parseEther(amount), // Amount to expects wei value
+      gasLimit: 21000, // Basic gas limit for a simple transaction
+      // TODO gasPrice, //use current gas price
+      chainId: Number((await signer.provider.getNetwork()).chainId), // https://chainlist.org/chain/11155111
+    }
+
+    const tx = await signer.sendTransaction(txObject)
+    await tx.wait()
+    return { hash: tx.hash }
+  } catch (error) {
+    console.error('Error sending transaction:', error)
+    return false
+  }
 }

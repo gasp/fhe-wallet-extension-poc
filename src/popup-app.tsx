@@ -7,6 +7,8 @@ import { Settings } from './components/settings'
 import { Nav } from './components/nav'
 import { Address } from './components/address'
 import { Balance } from './components/balance'
+import { Send } from './components/send'
+import { Activity } from './components/activity'
 
 export function PopupApp() {
   const [isLoading, setIsLoading] = useState(true)
@@ -59,8 +61,9 @@ export function PopupApp() {
       <Nav />
       <Address />
       <Balance />
-      {/* <Send />
+      <Send />
       <Activity />
+      {/* 
       <GasPrice /> */}
     </>
   )

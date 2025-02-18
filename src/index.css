@@ -1,3 +1,8 @@
+html {
+  width: 360px;
+  height: 600px;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -49,12 +54,18 @@ input {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+button:hover,
+input:hover {
   border-color: #646cff;
 }
 button:focus,
-button:focus-visible {
+button:focus-visible,
+input:focus,
+input:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+input {
+  padding: 0.6em;
 }
 
 section {

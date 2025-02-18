@@ -1,18 +1,22 @@
-import { useAppStore } from '../store'
+import { usePopupStore } from '../store'
 
 export function Activity() {
-  const transactions = useAppStore((state) => state.transactions)
+  const transactions = usePopupStore((state) => state.transactions)
   return (
     <section>
       <h3>Transaction Activity ({transactions.length})</h3>
-      <ul>
-        {transactions.map((tx, index) => (
-          <li key={index}>
-            <div>
-              {tx.encrypted ? '🔒' : '🧾'} <code>{tx.to}</code> - {tx.amount}{' '}
-              {tx.encrypted ? `encrypted ETH` : `ETH`}
-            </div>
-            {tx.status}{' '}
+      {transactions.map((tx, index) => (
+        <div key={index} style={{ marginBottom: '1rem' }}>
+          <div>
+            to: <code>{tx.to}</code>
+          </div>
+          <div>
+            amount:{' '}
+            <b>
+              {tx.amount} {tx.encrypted ? `encrypted ETH` : `ETH`}
+              {tx.encrypted ? ' 🔒' : ' ♢'}
+            </b>{' '}
+            – {tx.status}{' '}
             {tx.hash !== 'no-hash' && (
               <a
                 href={`https://sepolia.etherscan.io/tx/${tx.hash}`}
@@ -23,9 +27,9 @@ export function Activity() {
                 🔎
               </a>
             )}
-          </li>
-        ))}
-      </ul>
+          </div>
+        </div>
+      ))}
     </section>
   )
 }

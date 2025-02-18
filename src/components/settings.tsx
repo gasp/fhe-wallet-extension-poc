@@ -8,6 +8,7 @@ function State() {
 
 export function Settings() {
   const setShowSettings = usePopupStore((state) => state.setShowSettings)
+  const hasWallet = usePopupStore((state) => state.hasWallet)
   const onClose = () => setShowSettings(false)
   return (
     <>
@@ -15,7 +16,7 @@ export function Settings() {
         <a onClick={onClose}>×</a>
       </nav>
       <h1>Settings</h1>
-      <Delete />
+      {hasWallet && <Delete />}
       <State />
     </>
   )
