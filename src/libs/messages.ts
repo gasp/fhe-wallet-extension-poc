@@ -11,6 +11,7 @@ export type OffscreenRequest =
   | BalanceEncryptedRequest
   | SendClearRequest
   | SendEncryptedRequest
+  | GasPriceRequest
 export type OffscreenResponse =
   | PingResponse
   | InitializeWasmResponse
@@ -24,6 +25,7 @@ export type OffscreenResponse =
   | BalanceEncryptedResponse
   | SendClearResponse
   | SendEncryptedResponse
+  | GasPriceResponse
 
 type PingRequest = {
   type: 'ping'
@@ -168,4 +170,16 @@ export type SendEncryptedResponse = {
   type: 'send-encrypted'
   target: 'main'
   data: { hash: string } | false
+}
+
+export type GasPriceRequest = {
+  type: 'gas-price'
+  target: 'offscreen'
+  data: null
+}
+
+export type GasPriceResponse = {
+  type: 'gas-price'
+  target: 'main'
+  data: { price: string } | false
 }

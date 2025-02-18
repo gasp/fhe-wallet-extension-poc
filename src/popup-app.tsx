@@ -9,6 +9,7 @@ import { Address } from './components/address'
 import { Balance } from './components/balance'
 import { Send } from './components/send'
 import { Activity } from './components/activity'
+import { GasPrice } from './components/gas-price'
 
 export function PopupApp() {
   const [isLoading, setIsLoading] = useState(true)
@@ -42,8 +43,7 @@ export function PopupApp() {
     return (
       <div>
         <Nav />
-        <b>Loading</b>
-        <br />
+        <h1>Loading</h1>
         creating offscreen, searching for storage and instantiating wasm ...
       </div>
     )
@@ -63,8 +63,7 @@ export function PopupApp() {
       <Balance />
       <Send />
       <Activity />
-      {/* 
-      <GasPrice /> */}
+      <GasPrice />
     </>
   )
 }

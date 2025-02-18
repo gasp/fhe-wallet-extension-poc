@@ -1,130 +1,38 @@
-import { ethers } from 'ethers'
+import { ethers, formatEther } from 'ethers'
 import {
   createFhevmInstance,
   decryptBalance,
   encryptAmount,
-} from './libs/fhevm'
-import { decryptPrivateKey, encryptPrivateKey } from './libs/aes'
+} from '../libs/fhevm'
+import { decryptPrivateKey, encryptPrivateKey } from '../libs/aes'
 import {
-  OffscreenRequest,
-  OffscreenResponse,
   SendClearRequest,
   WalletExportRequest,
   WalletImportRequest,
-} from './libs/messages'
-import { getSigner } from './libs/eth'
+} from '../libs/messages'
+import { getSigner } from '../libs/eth'
 import {
   getEncryptedWalletKey,
   hasEncryptedWalletKey,
   removeEncryptedWalletKey,
   setEncryptedWalletKey,
-} from './storage'
+} from '../storage'
 
 const ENCRYPTEDERC20_CONTRACT_ADDRESS = import.meta.env
   .VITE_ENCRYPTEDERC20_CONTRACT_ADDRESS
 
-chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
-  if (message.target === 'offscreen') {
-    switch (message.type) {
-      case 'initialize-wasm':
-        // eslint-disable-next-line no-case-declarations
-        const instance = await createFhevmInstance()
-        talk('initialize-wasm', !!instance)
-        break
+let signer: null | ethers.Wallet = null
 
-      case 'wallet-exists':
-        // eslint-disable-next-line no-case-declarations
-        const exists = await WalletExists()
-        talk('wallet-exists', exists)
-        break
-
-      case 'wallet-create-random':
-        // eslint-disable-next-line no-case-declarations
-        const created = await WalletCreateRandom(message.data.password)
-        talk('wallet-create-random', created)
-        break
-
-      case 'wallet-import':
-        // eslint-disable-next-line no-case-declarations
-        const imported = await WalletImport(message.data)
-        talk('wallet-import', imported)
-        break
-
-      case 'wallet-export':
-        // eslint-disable-next-line no-case-declarations
-        const exported = await WalletExport(message.data)
-        talk('wallet-export', exported)
-        break
-
-      case 'wallet-delete':
-        // eslint-disable-next-line no-case-declarations
-        const deleted = await WalletDelete()
-        talk('wallet-delete', deleted)
-        break
-
-      case 'login':
-        // eslint-disable-next-line no-case-declarations
-        const loggedin = await login(message.data.password)
-        talk('login', loggedin)
-        break
-
-      case 'balance-clear':
-        // eslint-disable-next-line no-case-declarations
-        const balancec = await balanceClear()
-        talk('balance-clear', balancec)
-        break
-
-      case 'balance-encrypted':
-        // eslint-disable-next-line no-case-declarations
-        const balancee = await balanceEncrypted()
-        talk('balance-encrypted', balancee)
-        break
-
-      case 'send-clear':
-        // eslint-disable-next-line no-case-declarations
-        const transactionClear = await sendClear(message.data)
-        talk('send-clear', transactionClear)
-        break
-
-      case 'send-encrypted':
-        // eslint-disable-next-line no-case-declarations
-        const transactionEncrypted = await sendEncrypted(message.data)
-        talk('send-encrypted', transactionEncrypted)
-        break
-
-      case 'ping':
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        talk('ping', 'pong')
-        break
-      default:
-        return message satisfies never
-    }
-  }
-})
-
-function talk(
-  type: OffscreenResponse['type'],
-  payload: OffscreenResponse['data']
-) {
-  try {
-    chrome.runtime.sendMessage({
-      type,
-      target: 'main',
-      data: payload,
-    } as OffscreenResponse)
-  } catch (error) {
-    console.error('Error sending message', error)
-    console.log(type, payload)
-    throw error
-  }
+export async function initialize() {
+  return await createFhevmInstance()
 }
 
-async function WalletExists() {
+export async function WalletExists() {
   const exists = await hasEncryptedWalletKey()
   return exists
 }
 
-async function WalletCreateRandom(password: string) {
+export async function walletCreateRandom(password: string) {
   const wallet = ethers.Wallet.createRandom()
   const privateKey = wallet.privateKey
   const { encrypted, iv } = await encryptPrivateKey(password, privateKey)
@@ -132,7 +40,7 @@ async function WalletCreateRandom(password: string) {
   return true
 }
 
-async function WalletImport({
+export async function walletImport({
   password,
   walletPrivateKey,
 }: WalletImportRequest['data']) {
@@ -141,21 +49,19 @@ async function WalletImport({
   return true
 }
 
-async function WalletExport({ password }: WalletExportRequest['data']) {
+export async function walletExport({ password }: WalletExportRequest['data']) {
   const { encrypted, iv } = await getEncryptedWalletKey()
   const decrypted = await decryptPrivateKey(password, encrypted, iv)
   return { walletPrivateKey: decrypted }
 }
 
-async function WalletDelete() {
+export async function walletDelete() {
   await removeEncryptedWalletKey()
   console.log('deleted wallet')
   return true
 }
 
-let signer: null | ethers.Wallet = null
-
-async function login(password: string) {
+export async function login(password: string) {
   try {
     const { encrypted, iv } = await getEncryptedWalletKey()
     if (!encrypted || !iv) {
@@ -174,7 +80,7 @@ async function login(password: string) {
   }
 }
 
-async function balanceClear() {
+export async function balanceClear() {
   if (!signer) {
     console.error('No signer found')
     return false
@@ -187,7 +93,7 @@ async function balanceClear() {
   return ethers.formatEther(balanceWei)
 }
 
-async function balanceEncrypted() {
+export async function balanceEncrypted() {
   if (!signer) {
     console.error('No signer found')
     return false
@@ -206,7 +112,7 @@ async function balanceEncrypted() {
   return decrypted.toString()
 }
 
-async function sendClear({ to, amount }: SendClearRequest['data']) {
+export async function sendClear({ to, amount }: SendClearRequest['data']) {
   if (!signer) {
     console.error('No signer found')
     return false
@@ -217,11 +123,13 @@ async function sendClear({ to, amount }: SendClearRequest['data']) {
   }
 
   try {
+    const { gasPrice } = await signer.provider.getFeeData()
+
     const txObject = {
       to,
       value: ethers.parseEther(amount), // Amount to expects wei value
       gasLimit: 21000, // Basic gas limit for a simple transaction
-      // TODO gasPrice, //use current gas price
+      gasPrice, //use current gas price
       chainId: Number((await signer.provider.getNetwork()).chainId), // https://chainlist.org/chain/11155111
     }
 
@@ -234,7 +142,7 @@ async function sendClear({ to, amount }: SendClearRequest['data']) {
   }
 }
 
-async function sendEncrypted({ to, amount }: SendClearRequest['data']) {
+export async function sendEncrypted({ to, amount }: SendClearRequest['data']) {
   if (!signer) {
     console.error('No signer found')
     return false
@@ -264,4 +172,22 @@ async function sendEncrypted({ to, amount }: SendClearRequest['data']) {
     console.error('Error sending transaction:', error)
     return false
   }
+}
+
+export async function gasPrice() {
+  if (!signer) {
+    console.error('No signer found')
+    return false
+  }
+  if (!signer.provider) {
+    console.error('No provider found')
+    return false
+  }
+  const { gasPrice } = await signer.provider.getFeeData()
+
+  if (!gasPrice) {
+    console.error('No gas price found')
+    return false
+  }
+  return { price: formatEther(gasPrice) }
 }

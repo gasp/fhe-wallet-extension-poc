@@ -15,6 +15,8 @@ type PopupStore = {
   setEncryptedBalance: (encryptedBalance: string) => void
   transactions: Transaction[]
   setTransactions: (transactions: Transaction[]) => void
+  gasPrice: string
+  setGasPrice: (gasPrice: string) => void
 }
 
 type AppStore = {
@@ -50,23 +52,10 @@ export const usePopupStore = create<PopupStore>((set) => ({
   setBalance: (balance: string) => set({ balance }),
   encryptedBalance: '',
   setEncryptedBalance: (encryptedBalance: string) => set({ encryptedBalance }),
-  transactions: [
-    {
-      to: '0xA3C78377D77FaadEb6759c87E4A42E854C671671',
-      amount: '0.01',
-      hash: '0x1234567890',
-      encrypted: false,
-      status: 'Confirmed',
-    },
-    {
-      to: '0xA3C78377D77FaadEb6759c87E4A42E854C671671',
-      amount: '2',
-      hash: '0x1234567890',
-      encrypted: true,
-      status: 'Confirmed',
-    },
-  ],
+  transactions: [],
   setTransactions: (transactions: Transaction[]) => set({ transactions }),
+  gasPrice: '0',
+  setGasPrice: (gasPrice: string) => set({ gasPrice }),
 }))
 
 export const useAppStore = create<AppStore>((set) => ({
