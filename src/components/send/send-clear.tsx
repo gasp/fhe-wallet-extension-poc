@@ -73,7 +73,7 @@ export function SendClear() {
 
   return (
     <>
-      <h3>Send Clear ETH</h3>
+      <h2>Send Clear ETH</h2>
       <input
         style={{ width: '150px' }}
         name="recipient"

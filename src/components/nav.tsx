@@ -4,7 +4,7 @@ export function Nav() {
   const setShowSettings = usePopupStore((state) => state.setShowSettings)
   const onShowSettings = () => setShowSettings(true)
   return (
-    <nav>
+    <nav style={{ fontSize: '1.5em' }}>
       <a onClick={onShowSettings}>≡</a>
     </nav>
   )

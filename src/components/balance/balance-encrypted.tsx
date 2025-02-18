@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { usePopupStore } from '../../store'
 import { service } from '../../libs/offscreeen-service'
 import { BalanceEncryptedResponse } from '../../libs/messages'
@@ -8,8 +8,10 @@ export function BalanceEncrypted() {
   const setEncryptedBalance = usePopupStore(
     (state) => state.setEncryptedBalance
   )
+  const [loading, setLoading] = useState(false)
 
   const handleFetchEncryptBalance = useCallback(async () => {
+    setLoading(true)
     try {
       const balanceEnc = (await service({
         type: 'balance-encrypted',
@@ -24,6 +26,7 @@ export function BalanceEncrypted() {
     } catch (error) {
       console.error('Error fetching or decrypting balance:', error)
     }
+    setLoading(false)
   }, [setEncryptedBalance])
   useEffect(() => {
     handleFetchEncryptBalance()
@@ -39,9 +42,14 @@ export function BalanceEncrypted() {
           <span>~</span>
         )}{' '}
         Encrypted ETH
-      </span>
-      <button onClick={handleFetchEncryptBalance}>
-        <span>Refresh</span>
+      </span>{' '}
+      <button
+        className="refresh"
+        disabled={loading}
+        onClick={handleFetchEncryptBalance}
+        title="Refresh"
+      >
+        <span>⟳</span>
       </button>
       {encryptedBalance === '0' && (
         <div>

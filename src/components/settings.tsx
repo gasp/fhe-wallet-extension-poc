@@ -13,7 +13,7 @@ export function Settings() {
   const onClose = () => setShowSettings(false)
   return (
     <>
-      <nav>
+      <nav style={{ fontSize: '1.5em' }}>
         <a onClick={onClose}>×</a>
       </nav>
       <h1>Settings</h1>

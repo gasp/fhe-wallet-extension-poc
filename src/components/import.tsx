@@ -26,19 +26,24 @@ export function Import() {
       <h1>Import your wallet</h1>
       <p>Disclaimer: I don't know how this is secure, it's for testing only</p>
       <div>
-        <input
-          type="text"
-          placeholder="Wallet Private Key"
+        <textarea
           value={privateKey}
           onChange={(e) => setPrivateKey(e.target.value)}
-        />
+          style={{ width: '310px' }}
+          rows={3}
+        ></textarea>
       </div>
-      <div>(get this code from your metamask extension)</div>
+      <div>
+        (You can get this private key from your metamask wallet extension)
+      </div>
+      <p>Create a password to secure your wallet</p>
       <div>
         <input
+          type="password"
           placeholder="Enter Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          style={{ width: '50%', margin: '1rem 0' }}
         />
       </div>
       <button onClick={onImport}>Import your wallet</button>

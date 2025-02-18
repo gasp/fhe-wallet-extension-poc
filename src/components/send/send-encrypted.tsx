@@ -72,7 +72,7 @@ export function SendEncrypted() {
 
   return (
     <>
-      <h3>Send Encrypted ETH</h3>
+      <h2>Send Encrypted ETH</h2>
       <input
         style={{ width: '150px' }}
         name="recipient"

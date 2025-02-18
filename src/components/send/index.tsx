@@ -6,7 +6,6 @@ export function Send() {
   const [isEncrypted, setIsEncrypted] = useState(true)
   return (
     <section>
-      <h2>Send</h2>
       {isEncrypted ? <SendEncrypted /> : <SendClear />}
       <div>
         <input

@@ -9,7 +9,7 @@ export function New() {
   const onShowSettings = () => setShowSettings(true)
   return (
     <>
-      <nav>
+      <nav style={{ fontSize: '1.5em' }}>
         <a onClick={onShowSettings}>≡</a> |{' '}
         <a onClick={() => setTab('create')}>create</a> |{' '}
         <a onClick={() => setTab('import')}>import</a>

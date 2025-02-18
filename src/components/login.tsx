@@ -29,13 +29,17 @@ export function Login() {
   return (
     <section>
       <h1>Login</h1>
-      <p>input your password</p>
-      <input
-        placeholder="Enter Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={onLogin}>Decrypt Key</button>
+      <p>input your password to unlock your wallet</p>
+      <div>
+        <input
+          type="password"
+          placeholder="Enter Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: '50%', margin: '1rem 0' }}
+        />
+      </div>
+      <button onClick={onLogin}>Unlock</button>
       {!!error.length && <div style={{ color: 'red' }}>{error}</div>}
     </section>
   )

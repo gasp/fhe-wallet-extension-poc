@@ -28,14 +28,17 @@ export function Create() {
       <p>Disclaimer: I don't know how this is secure, it's for testing only</p>
       <div>
         <input
+          type="password"
           placeholder="Enter Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          style={{ width: '50%', margin: '1rem 0' }}
         />
       </div>
-      <div>
-        make sure you remember this password, without it your wallet is lost
-      </div>
+      <p>
+        Make sure you remember this password, without it your wallet is lost
+      </p>
+
       <button onClick={onCreateWallet}>Create your wallet</button>
 
       {!!error.length && <div style={{ color: 'red' }}>{error}</div>}
