@@ -40,3 +40,14 @@ export async function setEncryptedWalletKey(
     }
   })
 }
+
+export async function removeEncryptedWalletKey(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      localStorage.removeItem(ENCRYPTER_WALLET_KEY)
+      resolve()
+    } catch (error) {
+      reject(error)
+    }
+  })
+}

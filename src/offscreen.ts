@@ -6,6 +6,7 @@ import { getSigner } from './libs/eth'
 import {
   getEncryptedWalletKey,
   hasEncryptedWalletKey,
+  removeEncryptedWalletKey,
   setEncryptedWalletKey,
 } from './storage'
 
@@ -26,8 +27,14 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
 
       case 'wallet-create-random':
         // eslint-disable-next-line no-case-declarations
-        const wallet = await WalletCreateRandom(message.data.password)
-        talk('wallet-create-random', wallet)
+        const created = await WalletCreateRandom(message.data.password)
+        talk('wallet-create-random', created)
+        break
+
+      case 'wallet-delete':
+        // eslint-disable-next-line no-case-declarations
+        const deleted = await WalletDelete()
+        talk('wallet-delete', deleted)
         break
 
       case 'login':
@@ -41,7 +48,7 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         talk('ping', 'pong')
         break
       default:
-        throw new Error(`Unrecognized message: ${message.type}`)
+        return message satisfies never
     }
   }
 })
@@ -73,6 +80,12 @@ async function WalletCreateRandom(password: string) {
   const privateKey = wallet.privateKey
   const { encrypted, iv } = await encryptPrivateKey(password, privateKey)
   await setEncryptedWalletKey({ encrypted, iv })
+  return true
+}
+
+async function WalletDelete() {
+  await removeEncryptedWalletKey()
+  console.log('deleted wallet')
   return true
 }
 

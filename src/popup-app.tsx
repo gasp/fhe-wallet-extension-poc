@@ -3,6 +3,12 @@ import { createOffscreenDocument, service } from './libs/offscreeen-service'
 import { LoginResponse } from './libs/messages'
 import { usePopupStore } from './store'
 import { New } from './components/new'
+import { Delete } from './components/delete'
+
+function State() {
+  const state = usePopupStore.getState()
+  return <pre>{JSON.stringify(state, null, 2)}</pre>
+}
 
 export function PopupApp() {
   const [isLoading, setIsLoading] = useState(true)
@@ -52,21 +58,32 @@ export function PopupApp() {
   if (isLoading)
     return (
       <div>
+        <State />
         <b>Loading</b>
         <br />
         creating offscreen, searching for storage and instantiating wasm ...
       </div>
     )
   if (!isWasm) return <div>Wasm not supported</div>
-  if (!hasWallet) return <New />
+  if (!hasWallet)
+    return (
+      <>
+        <State />
+        <New />
+      </>
+    )
   if (!address)
     return (
       <div>
+        <State />
+        <Delete />
         <button onClick={handleLogin}>login</button>
       </div>
     )
   return (
     <div>
+      <State />
+      <Delete />
       {address}
       <pre style={{ width: '300px', height: '300px', overflow: 'scroll' }}>
         {JSON.stringify(debug, null, 2)}

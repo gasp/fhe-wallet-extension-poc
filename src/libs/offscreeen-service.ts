@@ -46,15 +46,23 @@ const eventBus = new MinimalEventBus()
  * @param data: the payload to compute
  * @returns
  */
-export async function service({
+export async function service<T extends OffscreenRequest['data']>({
   type,
   data,
-}: Omit<OffscreenRequest, 'target'>): Promise<OffscreenResponse['data']> {
+}: {
+  type: OffscreenRequest['type']
+  data: T
+}): Promise<OffscreenResponse['data']> {
   return new Promise((resolve) => {
     // TODO: create a timeout that rejects the promise if no response is received
     // and once clears the timeout
-    eventBus.once(type, async (response: OffscreenResponse['data']) => {
+    eventBus.once(type, async (response) => {
       console.log('service: Received message', type, response)
+      // TODO: check type in response to help typescript. This needs to refactor the dispatcher & the event bus
+      // if (response.type !== 'error') {
+      //   console.error('service: Received mismatched type', type)
+      //   return
+      // }
       resolve(response)
     })
     chrome.runtime.sendMessage({

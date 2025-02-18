@@ -3,6 +3,7 @@ export type OffscreenRequest =
   | InitializeWasmRequest
   | WalletExistsRequest
   | WalletCreateRandomRequest
+  | WalletDeleteRequest
   | LoginRequest
 // | UnknownMessage
 export type OffscreenResponse =
@@ -10,6 +11,7 @@ export type OffscreenResponse =
   | InitializeWasmResponse
   | WalletExistsResponse
   | WalletCreateRandomResponse
+  | WalletDeleteResponse
   | LoginResponse
 // | UnknownMessage
 
@@ -62,7 +64,19 @@ type WalletCreateRandomResponse = {
   data: boolean
 }
 
-type LoginRequest = {
+type WalletDeleteRequest = {
+  type: 'wallet-delete'
+  target: 'offscreen'
+  data: null
+}
+
+type WalletDeleteResponse = {
+  type: 'wallet-delete'
+  target: 'main'
+  data: boolean
+}
+
+export type LoginRequest = {
   type: 'login'
   target: 'offscreen'
   data: { password: string }
