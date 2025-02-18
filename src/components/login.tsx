@@ -1,41 +1,41 @@
 import { useCallback, useState } from 'react'
-import { getEncryptedWalletKey } from '../storage'
-import { decryptPrivateKey } from '../libs/aes'
-import { useAuthStore } from '../store'
+import { service } from '../libs/offscreeen-service'
+import { LoginResponse } from '../libs/messages'
+import { usePopupStore } from '../store'
 
 export function Login() {
   const [password, setPassword] = useState('swordfish')
-  const setWalletPrivateKey = useAuthStore((state) => state.setWalletPrivateKey)
   const [error, setError] = useState('')
+  const setAddress = usePopupStore((state) => state.setAddress)
 
-  const decryptKey = useCallback(async () => {
+  const onLogin = useCallback(async () => {
     try {
-      const { encrypted, iv } = await getEncryptedWalletKey()
-
-      if (!encrypted || !iv) {
-        console.error('No encrypted key found')
+      const response = (await service({
+        type: 'login',
+        data: { password },
+      })) as LoginResponse['data']
+      if (response === false) {
+        setError('Invalid password')
         return
       }
-
-      const decrypted = await decryptPrivateKey(password, encrypted, iv)
-      setWalletPrivateKey(decrypted)
-
+      setAddress(response.address)
       setError('')
     } catch (error) {
       console.error(error)
       setError(`Error decrypting key: ${error}`)
     }
-  }, [password, setWalletPrivateKey])
+  }, [password, setAddress])
 
   return (
     <section>
-      <h2>input your password</h2>
+      <h1>Login</h1>
+      <p>input your password</p>
       <input
         placeholder="Enter Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={decryptKey}>Decrypt Key</button>
+      <button onClick={onLogin}>Decrypt Key</button>
       {!!error.length && <div style={{ color: 'red' }}>{error}</div>}
     </section>
   )

@@ -43,6 +43,12 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         talk('login', result)
         break
 
+      case 'balance-clear':
+        // eslint-disable-next-line no-case-declarations
+        const balance = await balanceClear()
+        talk('balance-clear', balance)
+        break
+
       case 'ping':
         await new Promise((resolve) => setTimeout(resolve, 1000))
         talk('ping', 'pong')
@@ -108,4 +114,17 @@ async function login(password: string) {
     console.log(`Error decrypting key: ${error}`)
     return false
   }
+}
+
+async function balanceClear() {
+  if (!signer) {
+    console.error('No signer found')
+    return false
+  }
+  if (!signer.provider) {
+    console.error('No provider found')
+    return false
+  }
+  const balanceWei = await signer.provider.getBalance(signer.address)
+  return ethers.formatEther(balanceWei)
 }

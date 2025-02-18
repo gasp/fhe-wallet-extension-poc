@@ -1,7 +1,7 @@
-import { useAppStore } from '../store'
+import { usePopupStore } from '../store'
 
 export function Address() {
-  const address = useAppStore((state) => state.address)
+  const address = usePopupStore((state) => state.address)
 
   return (
     <section>

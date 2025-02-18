@@ -5,7 +5,7 @@ export type OffscreenRequest =
   | WalletCreateRandomRequest
   | WalletDeleteRequest
   | LoginRequest
-// | UnknownMessage
+  | BalanceClearRequest
 export type OffscreenResponse =
   | PingResponse
   | InitializeWasmResponse
@@ -13,7 +13,7 @@ export type OffscreenResponse =
   | WalletCreateRandomResponse
   | WalletDeleteResponse
   | LoginResponse
-// | UnknownMessage
+  | BalanceClearResponse
 
 type PingRequest = {
   type: 'ping'
@@ -85,5 +85,17 @@ export type LoginRequest = {
 export type LoginResponse = {
   type: 'login'
   target: 'main'
-  data: { address: string }
+  data: { address: string } | false
+}
+
+type BalanceClearRequest = {
+  type: 'balance-clear'
+  target: 'offscreen'
+  data: null
+}
+
+export type BalanceClearResponse = {
+  type: 'balance-clear'
+  target: 'main'
+  data: string
 }
