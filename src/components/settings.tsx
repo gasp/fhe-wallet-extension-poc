@@ -1,5 +1,6 @@
 import { usePopupStore } from '../store'
 import { Delete } from './delete'
+import { ExportWallet } from './export'
 
 function State() {
   const state = usePopupStore.getState()
@@ -16,7 +17,12 @@ export function Settings() {
         <a onClick={onClose}>×</a>
       </nav>
       <h1>Settings</h1>
-      {hasWallet && <Delete />}
+      {hasWallet && (
+        <>
+          <Delete />
+          <ExportWallet />
+        </>
+      )}
       <State />
     </>
   )

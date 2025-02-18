@@ -9,6 +9,8 @@ import {
   OffscreenRequest,
   OffscreenResponse,
   SendClearRequest,
+  WalletExportRequest,
+  WalletImportRequest,
 } from './libs/messages'
 import { getSigner } from './libs/eth'
 import {
@@ -40,6 +42,18 @@ chrome.runtime.onMessage.addListener(async (message: OffscreenRequest) => {
         // eslint-disable-next-line no-case-declarations
         const created = await WalletCreateRandom(message.data.password)
         talk('wallet-create-random', created)
+        break
+
+      case 'wallet-import':
+        // eslint-disable-next-line no-case-declarations
+        const imported = await WalletImport(message.data)
+        talk('wallet-import', imported)
+        break
+
+      case 'wallet-export':
+        // eslint-disable-next-line no-case-declarations
+        const exported = await WalletExport(message.data)
+        talk('wallet-export', exported)
         break
 
       case 'wallet-delete':
@@ -116,6 +130,21 @@ async function WalletCreateRandom(password: string) {
   const { encrypted, iv } = await encryptPrivateKey(password, privateKey)
   await setEncryptedWalletKey({ encrypted, iv })
   return true
+}
+
+async function WalletImport({
+  password,
+  walletPrivateKey,
+}: WalletImportRequest['data']) {
+  const { encrypted, iv } = await encryptPrivateKey(password, walletPrivateKey)
+  await setEncryptedWalletKey({ encrypted, iv })
+  return true
+}
+
+async function WalletExport({ password }: WalletExportRequest['data']) {
+  const { encrypted, iv } = await getEncryptedWalletKey()
+  const decrypted = await decryptPrivateKey(password, encrypted, iv)
+  return { walletPrivateKey: decrypted }
 }
 
 async function WalletDelete() {

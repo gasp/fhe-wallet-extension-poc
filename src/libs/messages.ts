@@ -3,6 +3,8 @@ export type OffscreenRequest =
   | InitializeWasmRequest
   | WalletExistsRequest
   | WalletCreateRandomRequest
+  | WalletImportRequest
+  | WalletExportRequest
   | WalletDeleteRequest
   | LoginRequest
   | BalanceClearRequest
@@ -14,6 +16,8 @@ export type OffscreenResponse =
   | InitializeWasmResponse
   | WalletExistsResponse
   | WalletCreateRandomResponse
+  | WalletImportResponse
+  | WalletExportResponse
   | WalletDeleteResponse
   | LoginResponse
   | BalanceClearResponse
@@ -68,6 +72,30 @@ type WalletCreateRandomResponse = {
   type: 'wallet-create-random'
   target: 'main'
   data: boolean
+}
+
+export type WalletImportRequest = {
+  type: 'wallet-import'
+  target: 'offscreen'
+  data: { walletPrivateKey: string; password: string }
+}
+
+type WalletImportResponse = {
+  type: 'wallet-import'
+  target: 'main'
+  data: boolean
+}
+
+export type WalletExportRequest = {
+  type: 'wallet-export'
+  target: 'offscreen'
+  data: { password: string }
+}
+
+export type WalletExportResponse = {
+  type: 'wallet-export'
+  target: 'main'
+  data: { walletPrivateKey: string } | false
 }
 
 type WalletDeleteRequest = {

@@ -1,27 +1,25 @@
-import { useState } from 'react'
-import { setEncryptedWalletKey } from '../storage'
-import { useAuthStore } from '../store'
-import { encryptPrivateKey } from '../libs/aes'
+import { useCallback, useState } from 'react'
+import { service } from '../libs/offscreeen-service'
 
 export function Import() {
   const [password, setPassword] = useState('swordfish')
   const [privateKey, setPrivateKey] = useState('')
   const [error, setError] = useState('')
-  const setHasWallet = useAuthStore((state) => state.setHasWallet)
 
-  const storeEncryptedKey = async () => {
+  const onImport = useCallback(async () => {
     if (!privateKey || !password)
       return setError('Enter private key and password')
     try {
-      const { encrypted, iv } = await encryptPrivateKey(password, privateKey)
-      await setEncryptedWalletKey({ encrypted, iv })
-      setHasWallet(true)
+      await service({
+        type: 'wallet-import',
+        data: { walletPrivateKey: privateKey, password },
+      })
       setError('')
     } catch (error) {
       console.error(error)
       setError(`Error encrypting key ${error}`)
     }
-  }
+  }, [privateKey, password])
 
   return (
     <section>
@@ -43,7 +41,7 @@ export function Import() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button onClick={storeEncryptedKey}>Import your wallet</button>
+      <button onClick={onImport}>Import your wallet</button>
 
       {!!error.length && <div style={{ color: 'red' }}>{error}</div>}
     </section>
